@@ -20,17 +20,21 @@ spring:
         ddl-auto: update
         dialect: org.hibernate.dialect.MySQL8Dialect
 
+  # as we have commented eureka client details and we are taking it from config-server, we have to tell it to this service
+  config:
+    import: configserver:http://localhost:9296
+
 
   h2:
     console:
       enabled: true
       path: /h2-console
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
 
 
