@@ -1,0 +1,3 @@
+this file is having information about the project
+we have added entity layer to have classes which interact with the DB. This will be holding a structure similar to table
+we have model layer which have classes which interact with the client.
