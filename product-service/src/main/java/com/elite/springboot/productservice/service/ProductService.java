@@ -50,4 +50,19 @@ public class ProductService implements IProductService{
                 .productId(product.getProductId()).build();*/
         return productResponse;
     }
+
+    @Override
+    public void reduceQuantity(long productId, long quantity) {
+        log.info("reduceQuantity() :: productId {}, quantity {} ", productId, quantity);
+        Product currentProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductServiceCustomException("Product with given Id not found ", "PRODUCT_NOT_FOUND"));
+
+        if(currentProduct.getQuantity() < quantity) {
+            throw new ProductServiceCustomException("Product doesn't have sufficient quantity", "INSUFFICIENT_QUANTITY");
+        }
+
+        currentProduct.setQuantity(currentProduct.getQuantity() - quantity);
+        productRepository.save(currentProduct);
+        log.info("Product quantity updated successfully");
+    }
 }
