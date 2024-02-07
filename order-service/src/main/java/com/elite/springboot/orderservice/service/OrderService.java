@@ -7,11 +7,13 @@ import com.elite.springboot.orderservice.external.client.ProductService;
 import com.elite.springboot.orderservice.external.request.PaymentRequest;
 import com.elite.springboot.orderservice.model.OrderRequest;
 import com.elite.springboot.orderservice.model.OrderResponse;
+import com.elite.springboot.orderservice.model.ProductResponse;
 import com.elite.springboot.orderservice.repository.IOrderRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -25,6 +27,9 @@ public class OrderService implements IOrderService{
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     IOrderRepository orderRepository;
@@ -81,11 +86,23 @@ public class OrderService implements IOrderService{
                 () -> new CustomException("Order not found for the given orderId", 404, "ORDER_NOT_FOUND")
         );
 
+        log.info("Invoking product service to fetch the product for Id : {} ", order.getProductId());
+        ProductResponse productResponse =
+                restTemplate.getForObject("localhost:8081/product/" + order.getProductId(),
+                        ProductResponse.class);
+
+        OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails
+                .builder()
+                .productId(productResponse.getProductId())
+                .productName(productResponse.getProductName())
+                .build();
+
         return OrderResponse.builder()
                 .orderId(order.getId())
                 .amount(order.getAmount())
                 .orderDate(order.getOrderDate())
                 .orderStatus(order.getOrderStatus())
+                .productDetails(productDetails)
                 .build();
     }
 }
