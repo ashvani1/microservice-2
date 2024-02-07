@@ -13,12 +13,16 @@ spring:
     password: password123
     #driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
   # as we have commented eureka client details and we are taking it from config-server, we have to tell it to this service
   config:
     import: configserver:http://localhost:9296
     properties:
       hibernate:
-        ddl-auto: update
+        hbm2ddl:
+          auto: create
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 
