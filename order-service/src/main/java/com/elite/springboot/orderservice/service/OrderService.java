@@ -1,12 +1,15 @@
 package com.elite.springboot.orderservice.service;
 
 import com.elite.springboot.orderservice.entity.Order;
+import com.elite.springboot.orderservice.external.client.PaymentService;
 import com.elite.springboot.orderservice.external.client.ProductService;
+import com.elite.springboot.orderservice.external.request.PaymentRequest;
 import com.elite.springboot.orderservice.model.OrderRequest;
 import com.elite.springboot.orderservice.repository.IOrderRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Instant;
 
@@ -16,6 +19,9 @@ public class OrderService implements IOrderService{
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     IOrderRepository orderRepository;
@@ -42,6 +48,28 @@ public class OrderService implements IOrderService{
                 .build();
         log.info("built order object {} ", order);
         Order orderCreated = orderRepository.save(order);
+        log.info("calling payment service to complete to payment");
+        PaymentRequest paymentRequest = PaymentRequest.builder()
+                .orderId(order.getId())
+                .paymentMode(orderRequest.getPaymentMode())
+                .amount(orderRequest.getTotalAmount())
+                .build();
+       String orderStatus = null;
+
+       try{
+           paymentService.doPayment(paymentRequest);
+           log.info("Payment is done successfully. Changing the order status to placed");
+           orderStatus = "PLACED";
+       }
+
+       catch (Exception e) {
+           log.error("Error occurred in payment. Changing order status to failed");
+           orderStatus = "PAYMENT_FAILED";
+       }
+
+       order.setOrderStatus(orderStatus);
+       orderRepository.save(order);
         return orderCreated.getId();
     }
+
 }
