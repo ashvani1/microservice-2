@@ -1,10 +1,12 @@
 package com.elite.springboot.orderservice.service;
 
 import com.elite.springboot.orderservice.entity.Order;
+import com.elite.springboot.orderservice.exception.CustomException;
 import com.elite.springboot.orderservice.external.client.PaymentService;
 import com.elite.springboot.orderservice.external.client.ProductService;
 import com.elite.springboot.orderservice.external.request.PaymentRequest;
 import com.elite.springboot.orderservice.model.OrderRequest;
+import com.elite.springboot.orderservice.model.OrderResponse;
 import com.elite.springboot.orderservice.repository.IOrderRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 @Log4j2
@@ -72,4 +75,17 @@ public class OrderService implements IOrderService{
         return orderCreated.getId();
     }
 
+    @Override
+    public OrderResponse getOrderDetails(long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new CustomException("Order not found for the given orderId", 404, "ORDER_NOT_FOUND")
+        );
+
+        return OrderResponse.builder()
+                .orderId(order.getId())
+                .amount(order.getAmount())
+                .orderDate(order.getOrderDate())
+                .orderStatus(order.getOrderStatus())
+                .build();
+    }
 }
