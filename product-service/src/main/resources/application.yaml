@@ -4,8 +4,7 @@ server:
 
 spring:
   application:
-    name:
-      PRODUCT-SERVICE
+    name: PRODUCT-SERVICE
   datasource:
     url: jdbc:mysql://localhost:3306/productdb
     #url: jdbc:mysql://localhost:3306/employee_db
