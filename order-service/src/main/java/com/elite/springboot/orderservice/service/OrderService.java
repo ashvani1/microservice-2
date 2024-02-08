@@ -7,16 +7,15 @@ import com.elite.springboot.orderservice.external.client.ProductService;
 import com.elite.springboot.orderservice.external.request.PaymentRequest;
 import com.elite.springboot.orderservice.model.OrderRequest;
 import com.elite.springboot.orderservice.model.OrderResponse;
+import com.elite.springboot.orderservice.model.PaymentResponse;
 import com.elite.springboot.orderservice.model.ProductResponse;
 import com.elite.springboot.orderservice.repository.IOrderRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
-import java.util.Optional;
 
 @Service
 @Log4j2
@@ -82,19 +81,29 @@ public class OrderService implements IOrderService{
 
     @Override
     public OrderResponse getOrderDetails(long orderId) {
+        log.info("OrderService :: getOrderDetails()");
         Order order = orderRepository.findById(orderId).orElseThrow(
                 () -> new CustomException("Order not found for the given orderId", 404, "ORDER_NOT_FOUND")
         );
 
-        log.info("Invoking product service to fetch the product for Id : {} ", order.getProductId());
-        ProductResponse productResponse =
-                restTemplate.getForObject("localhost:8081/product/" + order.getProductId(),
-                        ProductResponse.class);
-
+        //using feign client
+        ProductResponse productResponse = productService.getProduct(order.getProductId()).getBody();
         OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails
                 .builder()
                 .productId(productResponse.getProductId())
                 .productName(productResponse.getProductName())
+                .build();
+
+        log.info("Getting payment information from payment service");
+
+        //using rest template
+        PaymentResponse paymentResponse = restTemplate.getForObject("http://PAYMENT-SERVICE/payment/order/"+ orderId, PaymentResponse.class);
+
+        OrderResponse.PaymentDetails paymentDetails = OrderResponse.PaymentDetails.builder()
+                .amount(paymentResponse.getAmount())
+                .status(paymentResponse.getStatus())
+                .paymentDate(paymentResponse.getPaymentDate())
+                .paymentId(paymentResponse.getPaymentId())
                 .build();
 
         return OrderResponse.builder()
@@ -103,6 +112,7 @@ public class OrderService implements IOrderService{
                 .orderDate(order.getOrderDate())
                 .orderStatus(order.getOrderStatus())
                 .productDetails(productDetails)
+                .paymentDetails(paymentDetails)
                 .build();
     }
 }
