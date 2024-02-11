@@ -88,6 +88,12 @@ public class OrderService implements IOrderService{
 
         //using feign client
         ProductResponse productResponse = productService.getProduct(order.getProductId()).getBody();
+
+        //using rest client
+        ProductResponse productResponse1 = restTemplate.getForObject("http://PRODUCT-SERVICE/product/"+ order.getProductId(), ProductResponse.class);
+
+        log.info("product Response by rest {} ", productResponse1);
+
         OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails
                 .builder()
                 .productId(productResponse.getProductId())
@@ -98,7 +104,6 @@ public class OrderService implements IOrderService{
 
         //using rest template
         PaymentResponse paymentResponse = restTemplate.getForObject("http://PAYMENT-SERVICE/payment/order/"+ orderId, PaymentResponse.class);
-
         OrderResponse.PaymentDetails paymentDetails = OrderResponse.PaymentDetails.builder()
                 .amount(paymentResponse.getAmount())
                 .status(paymentResponse.getStatus())
