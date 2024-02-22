@@ -5,8 +5,11 @@ server:
 spring:
   application:
     name: PAYMENT-SERVICE
+  cloud:
+    config:
+      enabled: false
   datasource:
-    url: jdbc:mysql://localhost:3306/paymentdb
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/paymentdb
     #url: jdbc:mysql://localhost:3306/employee_db
     username: root
     password: password123
@@ -16,12 +19,11 @@ spring:
     hibernate:
       ddl-auto: update
   # as we have commented eureka client details and we are taking it from config-server, we have to tell it to this service
-  config:
-    import: configserver:http://localhost:9296
+#  config:
+#    import: configserver:http://localhost:9296
     properties:
       hibernate:
-        hbm2ddl:
-          auto: create
+        ddl-auto: update
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 
@@ -30,11 +32,11 @@ spring:
       enabled: true
       path: /h2-console
 
-#eureka:
-#  instance:
-#    prefer-ip-address: true
-#  client:
-#    fetch-registry: true
-#    serviceUrl:
-#      defaultZone: http://localhost:8761/eureka/
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
 
