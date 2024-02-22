@@ -9,12 +9,11 @@ spring:
     config:
       enabled: false
   datasource:
-#    url: jdbc:mysql://localhost:3306/orderdb
-    url: jdbc:mysql://${DB_HOST:localhost}:3306/orderdb
-    #url: jdbc:mysql://localhost:3306/employee_db
+#    url: jdbc:mysql://${DB_HOST:localhost}:3306/orderdb   #this is for local machine db
+    url: jdbc:mysql://mysql-container:3306/orderdb   #this is for docker machine db
     username: root
-    password: password123
-    #driverClassName: com.mysql.cj.jdbc.Driver
+    password: root   #docker mysql password
+    #password: password123   #local mysql password
   jpa:
     show-sql: true
     generate-ddl: true
