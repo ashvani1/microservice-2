@@ -6,8 +6,10 @@ spring:
     name: PAYMENT-SERVICE
   datasource:
     url: jdbc:mysql://mysql-container:3306/paymentdb
+    #url: jdbc:mysql://localhost:3306/orderdb        #local mysql
     username: root
     password: root
+    #password: password123   #local mysql password
   jpa:
     hibernate.ddl-auto: update
     show-sql: true

@@ -5,8 +5,10 @@ spring:
     name: ORDER-SERVICE
   datasource:
     url: jdbc:mysql://mysql-container:3306/orderdb
+    #url: jdbc:mysql://localhost:3306/orderdb        #local mysql
     username: root
     password: root
+   #password: password123   #local mysql password
   jpa:
     hibernate.ddl-auto: update
     show-sql: true
@@ -17,27 +19,12 @@ spring:
     console:
       enabled: true
       path: /h2-console
-#spring:
-#  application:
-#    name: ORDER-SERVICE
+
 #  cloud:
 #    config:
 #      enabled: false
-#  datasource:
-##    url: jdbc:mysql://${DB_HOST:localhost}:3306/orderdb   #this is for local machine db
-#    url: jdbc:mysql://mysql-container:3306/orderdb   #this is for docker machine db
-#    username: root
-#    password: root   #docker mysql password
-#    #password: password123   #local mysql password
-#  jpa:
-#    show-sql: true
-#    generate-ddl: true
-#    properties:
-#      hibernate:
-#        ddl-auto: update
-#        dialect: org.hibernate.dialect.MySQL8Dialect
 
-  # as we have commented eureka client details and we are taking it from config-server, we have to tell it to this service
+# as we have commented eureka client details and we are taking it from config-server, we have to tell it to this service
 #  config:
 #    import: configserver:http://localhost:9296
 
