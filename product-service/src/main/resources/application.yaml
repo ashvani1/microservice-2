@@ -4,11 +4,11 @@ spring:
   application:
     name: PRODUCT-SERVICE
   datasource:
-    url: jdbc:mysql://mysql-container:3306/productdb #while using the ms on docker with docker mysql
-    #url: jdbc:mysql://localhost:3306/orderdb        #local mysql
+    #url: jdbc:mysql://mysql-container:3306/productdb #while using the ms on docker with docker mysql
+    url: jdbc:mysql://localhost:3306/orderdb        #local mysql
     username: root
-    password: root
-    #password: password123   #local mysql password
+    #password: root
+    password: password123   #local mysql password
   jpa:
     hibernate.ddl-auto: update
     show-sql: true
@@ -27,6 +27,6 @@ eureka:
   client:
     fetch-registry: true
     serviceUrl:
-      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
-#      defaultZone: http://localhost:8761/eureka/
+      #defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+      defaultZone: http://localhost:8761/eureka/
 
