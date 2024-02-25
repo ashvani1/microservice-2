@@ -1,0 +1,51 @@
+version: '3'
+services:
+  orderservice:
+    image: 'microservices-2/orderservice:0.0.1'
+    container_name: orderservice
+    ports:
+      - '8082:8082'
+    networks:
+      - my-network
+    environment:
+      - EUREKA_SERVER_URL=http://host.docker.internal:8761/eureka
+  paymentservice:
+    image: 'microservices-2/paymentservice:0.0.1'
+    container_name: paymentservice
+    ports:
+      - '8084:8084'
+    networks:
+      - my-network
+    environment:
+      - EUREKA_SERVER_URL=http://host.docker.internal:8761/eureka
+  productservice:
+    image: 'microservices-2/productservice:0.0.1'
+    container_name: productservice
+    ports:
+      - '8081:8081'
+    networks:
+      - my-network
+    environment:
+      - EUREKA_SERVER_URL=http://host.docker.internal:8761/eureka
+
+
+networks:
+  my-network:
+    driver: bridge
+
+#  serviceregistry:
+#    image: 'microservices-2/serviceregistry:0.0.1'
+#    container_name: serviceregistry
+#    ports:
+#      - '8761:8761'
+#    environment:
+#      - network=my-network
+#      - EUREKA_SERVER_URL=http://host.docker.internal:8761/eureka
+#  cloudgateway:
+#    image: 'microservices-2/cloudgateway:0.0.1'
+#    container_name: cloudgateway
+#    ports:
+#      - '9090:9090'
+#    environment:
+#      - network=my-network
+#      - EUREKA_SERVER_URL=http://host.docker.internal:8761/eureka
